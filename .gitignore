@@ -1,5 +1,4 @@
 .idea/
 .target/
 .out/
-checkstyle.xml
-m-academy.iml
+*.iml
