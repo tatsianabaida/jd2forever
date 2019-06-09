@@ -7,7 +7,7 @@
 <body>
 <div>
     <c:forEach var="student" items="${requestScope.studentsList}">
-        <div>${student.lastName} ${student.firstName}
+        <div>${student.person.lastName} ${student.person.firstName}
             <br>Email: ${student.email}<br><br></div>
     </c:forEach>
 </div>

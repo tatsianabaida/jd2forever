@@ -1,8 +1,8 @@
 package by.itacademy.web.servlet;
 
-import by.itacademy.database.entity.Student;
-import by.itacademy.service.service.StudentService;
 import by.itacademy.web.util.JspPath;
+import com.itacademy.database.entity.Student;
+import com.itacademy.service.service.StudentService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,7 +21,7 @@ public class StudentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Student> studentsList = studentService.getAll();
-        studentsList.sort(Comparator.comparing(Student::getLastName));
+        studentsList.sort(Comparator.comparing(student -> student.getPerson().getFirstName()));
         req.setAttribute("studentsList", studentsList);
 
         getServletContext()

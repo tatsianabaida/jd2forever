@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/m_academy_repository</property>
+        <property name="connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</property>
+        <property name="connection.username">postgres</property>
+        <property name="connection.password">pass</property>
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+        <!--<property name="hbm2ddl.auto">create</property>-->
+
+        <mapping class="com.itacademy.database.entity.User"/>
+        <mapping class="com.itacademy.database.entity.Student"/>
+        <mapping class="com.itacademy.database.entity.Professor"/>
+        <mapping class="com.itacademy.database.entity.Course"/>
+        <mapping class="com.itacademy.database.entity.Task"/>
+        <mapping class="com.itacademy.database.entity.Homework"/>
+
+        <!-- DB schema will be updated if needed -->
+    </session-factory>
+</hibernate-configuration>
