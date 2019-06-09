@@ -1,7 +1,7 @@
-package by.itacademy.service.service;
+package com.itacademy.service.service;
 
-import by.itacademy.database.dao.StudentDao;
-import by.itacademy.database.entity.Student;
+import com.itacademy.database.dao.StudentDao;
+import com.itacademy.database.entity.Student;
 
 import java.util.List;
 
