@@ -16,7 +16,7 @@ import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ToString(exclude = "courses")
+@ToString(exclude = "courses", callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -36,9 +36,17 @@ public class Professor extends User {
     @OneToMany(mappedBy = "professor", orphanRemoval = true)
     private Set<Course> courses = new HashSet<>();
 
-    public Professor(Person person, Person imaginaryPerson, String email, String password, Role role,
-                     String speciality, String interests, Short workingExperienceYears) {
-        super(person, imaginaryPerson, email, password, role);
+    public Professor(Person person, String email, String password, Role role, String speciality, String interests,
+                     Short workingExperienceYears) {
+        super(person, email, password, role);
+        this.speciality = speciality;
+        this.interests = interests;
+        this.workingExperienceYears = workingExperienceYears;
+    }
+
+    public Professor(User user, String speciality, String interests,
+                     Short workingExperienceYears) {
+        super(user.getPerson(), user.getEmail(), user.getPassword(), user.getRole());
         this.speciality = speciality;
         this.interests = interests;
         this.workingExperienceYears = workingExperienceYears;

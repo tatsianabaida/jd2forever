@@ -1,51 +1,40 @@
 package com.itacademy.database.entity;
 
+import com.itacademy.database.util.SessionManager;
 import lombok.Cleanup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashSet;
 
+import static com.itacademy.database.testdata.TestDataGenerator.createCourse;
+import static com.itacademy.database.testdata.TestDataGenerator.createStudent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class CourseTest {
 
-    private static final SessionFactory FACTORY = new Configuration().configure().buildSessionFactory();
+    private static SessionFactory factory = SessionManager.getFactory();
 
-    @AfterClass
-    public static void close() {
-        FACTORY.close();
+    @Before
+    public void cleanTable() {
+        @Cleanup Session session = factory.openSession();
+        session.beginTransaction();
+        session.createQuery("delete from Homework ").executeUpdate();
+        session.createQuery("delete from Task ").executeUpdate();
+        session.createQuery("delete from Course ").executeUpdate();
+        session.getTransaction().commit();
     }
 
     @Test
     public void checkSaveCourse() {
-        @Cleanup Session session = FACTORY.openSession();
+        @Cleanup Session session = factory.openSession();
         session.beginTransaction();
-        Professor professor = new Professor(
-                Person.builder()
-                        .firstName("Dzianis")
-                        .lastName("Matveyenka")
-                        .build(),
-                Person.builder()
-                        .firstName("John")
-                        .lastName("Snow")
-                        .build(),
-                "matveyenka@macademy.com",
-                "matveyenka",
-                Role.ADMIN, "Industrial software development on Java",
-                "Game Of Thrones, Big Data, SQL, neural networks, algorithms and data structures",
-                Short.valueOf("7"));
-        Course course = Course.builder()
-                .name("JD1")
-                .professor(professor)
-                .build();
-        session.save(professor);
+        Course course = createCourse();
+        session.save(course.getProfessor());
         Serializable courseId = session.save(course);
         session.getTransaction().commit();
         assertNotNull(courseId);
@@ -53,55 +42,18 @@ public class CourseTest {
 
     @Test
     public void checkGetCourse() {
-        @Cleanup Session session = FACTORY.openSession();
+        @Cleanup Session session = factory.openSession();
         session.beginTransaction();
+        Course course = createCourse();
+        Student student1 = createStudent();
+        Student student2 = createStudent();
 
-        Professor professor = new Professor(
-                Person.builder()
-                        .firstName("Dzianis")
-                        .lastName("Matveyenka")
-                        .build(),
-                Person.builder()
-                        .firstName("John")
-                        .lastName("Snow")
-                        .build(),
-                "matveyenka@macademy.com",
-                "matveyenka",
-                Role.ADMIN, "Industrial software development on Java",
-                "Game Of Thrones, Big Data, SQL, neural networks, algorithms and data structures",
-                Short.valueOf("7"));
-        Student student1 = new Student(
-                Person.builder()
-                        .firstName("Artem")
-                        .lastName("Bobckevich")
-                        .build(),
-                null,
-                "bobckevich@macademy.com",
-                "bobckevich",
-                Role.USER,
-                "unknown",
-                "sysadmin");
-        Student student2 = new Student(
-                Person.builder()
-                        .firstName("Artem2")
-                        .lastName("Bobckevich")
-                        .build(),
-                null,
-                "bobckevich@macademy.com",
-                "bobckevich",
-                Role.USER,
-                "unknown",
-                "sysadmin");
+        session.save(course.getProfessor());
         session.save(student1);
         session.save(student2);
-
-        Course course = Course.builder()
-                .name("JD1")
-                .professor(professor)
-                .students(new HashSet<>(Arrays.asList(student1, student2)))
-                .build();
-        session.save(professor);
+        course.getStudents().addAll(Arrays.asList(student1, student2));
         Serializable courseId = session.save(course);
+
         session.flush();
         session.clear();
         Course courseFromDb = session.get(Course.class, courseId);

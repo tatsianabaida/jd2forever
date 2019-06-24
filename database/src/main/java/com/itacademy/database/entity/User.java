@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -37,13 +35,6 @@ public class User implements BaseEntity<Long> {
     @Embedded
     private Person person;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "firstName", column = @Column(name = "imaginary_person_first_name")),
-            @AttributeOverride(name = "lastName", column = @Column(name = "imaginary_person_last_name"))
-    })
-    private Person imaginaryPerson;
-
     @Column(name = "email", nullable = false)
     private String email;
 
@@ -54,9 +45,8 @@ public class User implements BaseEntity<Long> {
     @Column(name = "role", nullable = false)
     private Role role;
 
-    public User(Person person, Person imaginaryPerson, String email, String password, Role role) {
+    public User(Person person, String email, String password, Role role) {
         this.person = person;
-        this.imaginaryPerson = imaginaryPerson;
         this.email = email;
         this.password = password;
         this.role = role;

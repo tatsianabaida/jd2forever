@@ -1,4 +1,4 @@
-package by.itacademy.web.util;
+package com.itacademy.web.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
