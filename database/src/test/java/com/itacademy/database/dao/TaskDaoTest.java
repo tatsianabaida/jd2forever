@@ -4,12 +4,11 @@ import com.itacademy.database.entity.Homework;
 import com.itacademy.database.entity.Student;
 import com.itacademy.database.entity.Task;
 import com.itacademy.database.filter.TaskFilter;
+import java.util.List;
 import lombok.Cleanup;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
 import static com.itacademy.database.testdata.TestDataGenerator.createStudent;
@@ -103,13 +102,21 @@ public class TaskDaoTest {
         List<Task> all = taskDao.findAll();
         List<Task> allByProfessor = taskDao.getAll(TaskFilter.builder()
                 .byProfessor(professor3Id)
+                .limit(null)
+                .offset(null)
+                .byCourse(null)
+                .doneByStudent(null)
+                .toDoForStudent(null)
                 .build());
         List<Task> allByCourse = taskDao.getAll(TaskFilter.builder()
                 .byCourse(course3Id)
+                .byProfessor(null)
                 .build());
         List<Task> allByCourseAndProfessor = taskDao.getAll(TaskFilter.builder()
                 .byCourse(course1Id)
+                .toDoForStudent(null)
                 .byProfessor(professor3Id)
+                .limit(null)
                 .build());
 
         int expectedAll = 3;

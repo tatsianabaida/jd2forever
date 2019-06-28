@@ -2,12 +2,11 @@ package com.itacademy.database.dao;
 
 import com.itacademy.database.entity.Homework;
 import com.itacademy.database.filter.HomeworkFilter;
+import java.util.List;
 import lombok.Cleanup;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
 import static com.itacademy.database.util.SessionManager.getSession;
@@ -55,16 +54,21 @@ public class HomeworkDaoTest {
         List<Homework> allByTaskAndProfessorWithoutMark = homeworkDao.getAll(HomeworkFilter.builder()
                 .withMark(false)
                 .byTask(task2Id)
+                .byStudent(null)
+                .byCourse(null)
                 .forProfessor(professor2Id)
                 .build());
         List<Homework> allByCourseAndStudentWithMark = homeworkDao.getAll(HomeworkFilter.builder()
                 .byCourse(course1Id)
                 .byStudent(student2Id)
                 .withMark(true)
+                .byTask(null)
+                .forProfessor(null)
                 .build());
         List<Homework> allLimitAndOffset = homeworkDao.getAll(HomeworkFilter.builder()
                 .limit(1)
                 .offset(1)
+                .withMark(null)
                 .build());
 
         int expectedByTaskAndProfessorWithoutMark = 2;

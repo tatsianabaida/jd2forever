@@ -3,18 +3,16 @@ package com.itacademy.database.filter;
 import com.itacademy.database.entity.Person_;
 import com.itacademy.database.entity.Professor;
 import com.itacademy.database.entity.Professor_;
-import lombok.Getter;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import net.sf.cglib.proxy.Enhancer;
 
 import static com.itacademy.database.util.SessionManager.getSession;
-import static com.itacademy.database.util.StringUtils.isNotEmpty;
-import static java.util.Objects.isNull;
 
 @Getter
 public final class ProfessorFilter extends Filter<Professor> {
@@ -27,58 +25,47 @@ public final class ProfessorFilter extends Filter<Professor> {
         super(criteria, root, predicates, limit, offset);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static ProfessorBuilder builder() {
+        ProfessorBuilder original = new ProfessorBuilder();
+        return (ProfessorBuilder) Enhancer.create(ProfessorBuilder.class, getInterceptor(original));
     }
 
-    public static class Builder {
+    public static class ProfessorBuilder implements Builder<ProfessorFilter> {
 
         private CriteriaBuilder cb = getSession().getCriteriaBuilder();
         private CriteriaQuery<Professor> criteria = cb.createQuery(Professor.class);
         private Root<Professor> root = criteria.from(Professor.class);
         private List<Predicate> predicates = new ArrayList<>();
         private Integer limit = DEFAULT_LIMIT;
-        private Integer offset = 0;
+        private Integer offset = DEFAULT_OFFSET;
 
-        public Builder firstName(String firstName) {
-            if (isNotEmpty(firstName)) {
-                predicates.add(cb.like(root.get(Professor_.person).get(Person_.firstName), firstName));
-            }
+        public ProfessorBuilder firstName(String firstName) {
+            predicates.add(cb.like(root.get(Professor_.person).get(Person_.firstName), firstName));
             return this;
         }
 
-        public Builder lastName(String lastName) {
-            if (isNotEmpty(lastName)) {
-                predicates.add(cb.like(root.get(Professor_.person).get(Person_.lastName), lastName));
-            }
+        public ProfessorBuilder lastName(String lastName) {
+            predicates.add(cb.like(root.get(Professor_.person).get(Person_.lastName), lastName));
             return this;
         }
 
-        public Builder speciality(String speciality) {
-            if (isNotEmpty(speciality)) {
-                predicates.add(cb.equal(root.get(Professor_.speciality), speciality));
-            }
+        public ProfessorBuilder speciality(String speciality) {
+            predicates.add(cb.equal(root.get(Professor_.speciality), speciality));
             return this;
         }
 
-        public Builder email(String email) {
-            if (isNotEmpty(email)) {
-                predicates.add(cb.equal(root.get(Professor_.email), email));
-            }
+        public ProfessorBuilder email(String email) {
+            predicates.add(cb.equal(root.get(Professor_.email), email));
             return this;
         }
 
-        public Builder limit(Integer limit) {
-            if (!isNull(limit)) {
-                this.limit = limit;
-            }
+        public ProfessorBuilder limit(Integer limit) {
+            this.limit = limit;
             return this;
         }
 
-        public Builder offset(Integer offset) {
-            if (!isNull(offset)) {
-                this.offset = offset;
-            }
+        public ProfessorBuilder offset(Integer offset) {
+            this.offset = offset;
             return this;
         }
 

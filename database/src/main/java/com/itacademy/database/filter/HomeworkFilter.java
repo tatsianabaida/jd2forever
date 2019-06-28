@@ -12,17 +12,16 @@ import com.itacademy.database.entity.Student;
 import com.itacademy.database.entity.Student_;
 import com.itacademy.database.entity.Task;
 import com.itacademy.database.entity.Task_;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+import net.sf.cglib.proxy.Enhancer;
 
 import static com.itacademy.database.util.SessionManager.getSession;
-import static java.util.Objects.isNull;
 
 public final class HomeworkFilter extends Filter<Homework> {
 
@@ -34,11 +33,12 @@ public final class HomeworkFilter extends Filter<Homework> {
         super(criteria, root, predicates, limit, offset);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static HomeworkBuilder builder() {
+        HomeworkBuilder original = new HomeworkBuilder();
+        return (HomeworkBuilder) Enhancer.create(HomeworkBuilder.class, getInterceptor(original));
     }
 
-    public static class Builder {
+    public static class HomeworkBuilder implements Builder<HomeworkFilter> {
 
         private CriteriaBuilder cb = getSession().getCriteriaBuilder();
         private CriteriaQuery<Homework> criteria = cb.createQuery(Homework.class);
@@ -50,56 +50,44 @@ public final class HomeworkFilter extends Filter<Homework> {
         private Join<Task, Course> courseJoin = taskJoin.join(Task_.course);
         private Join<Course, Professor> professorJoin = courseJoin.join(Course_.professor);
         private Integer limit = DEFAULT_LIMIT;
-        private Integer offset = 0;
+        private Integer offset = DEFAULT_OFFSET;
 
-        public Builder byStudent(Long studentId) {
-            if (!isNull(studentId)) {
-                predicates.add(cb.equal(studentJoin.get(Student_.id), studentId));
-            }
+        public HomeworkBuilder byStudent(Long studentId) {
+            predicates.add(cb.equal(studentJoin.get(Student_.id), studentId));
             return this;
         }
 
-        public Builder forProfessor(Long professorId) {
-            if (!isNull(professorId)) {
-                predicates.add(cb.equal(professorJoin.get(Professor_.id), professorId));
-            }
+        public HomeworkBuilder forProfessor(Long professorId) {
+            predicates.add(cb.equal(professorJoin.get(Professor_.id), professorId));
             return this;
         }
 
-        public Builder byTask(Long taskId) {
-            if (!isNull(taskId)) {
-                predicates.add(cb.equal(taskJoin.get(Task_.id), taskId));
-            }
+        public HomeworkBuilder byTask(Long taskId) {
+            predicates.add(cb.equal(taskJoin.get(Task_.id), taskId));
             return this;
         }
 
-        public Builder byCourse(Long courseId) {
-            if (!isNull(courseId)) {
-                predicates.add(cb.equal(courseJoin.get(Course_.id), courseId));
-            }
+        public HomeworkBuilder byCourse(Long courseId) {
+            predicates.add(cb.equal(courseJoin.get(Course_.id), courseId));
             return this;
         }
 
-        public Builder withMark(Boolean withMark) {
-            if (!isNull(withMark) && withMark) {
+        public HomeworkBuilder withMark(Boolean withMark) {
+            if (withMark) {
                 predicates.add(cb.isNotNull(root.get(Homework_.mark)));
-            } else if (!isNull(withMark)) {
+            } else {
                 predicates.add(cb.isNull(root.get(Homework_.mark)));
             }
             return this;
         }
 
-        public Builder limit(Integer limit) {
-            if (!isNull(limit)) {
-                this.limit = limit;
-            }
+        public HomeworkBuilder limit(Integer limit) {
+            this.limit = limit;
             return this;
         }
 
-        public Builder offset(Integer offset) {
-            if (!isNull(offset)) {
-                this.offset = offset;
-            }
+        public HomeworkBuilder offset(Integer offset) {
+            this.offset = offset;
             return this;
         }
 

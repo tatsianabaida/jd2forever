@@ -3,12 +3,11 @@ package com.itacademy.database.dao;
 import com.itacademy.database.entity.Professor;
 import com.itacademy.database.filter.ProfessorFilter;
 import com.itacademy.database.util.SessionManager;
+import java.util.List;
 import lombok.Cleanup;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createProfessor;
 import static org.junit.Assert.assertEquals;
@@ -40,6 +39,10 @@ public class ProfessorDaoTest {
         List<Professor> all = professorDao.findAll();
         List<Professor> allMatveyenka = professorDao.getAll(ProfessorFilter.builder()
                 .lastName("Matveyenka")
+                .firstName(null)
+                .offset(null)
+                .limit(null)
+                .email(null)
                 .speciality("Java")
                 .build());
         int expectedAll = 3;
@@ -62,6 +65,8 @@ public class ProfessorDaoTest {
 
         List<Professor> allByFirstName = professorDao.getAll(ProfessorFilter.builder()
                 .firstName("NewFN")
+                .speciality(null)
+                .limit(null)
                 .build());
 
         List<Professor> allByFirstNameAndEmail = professorDao.getAll(ProfessorFilter.builder()

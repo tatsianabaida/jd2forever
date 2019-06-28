@@ -12,7 +12,8 @@ import com.itacademy.database.entity.Student;
 import com.itacademy.database.entity.Student_;
 import com.itacademy.database.entity.Task;
 import com.itacademy.database.entity.Task_;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -20,11 +21,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
-import java.util.ArrayList;
-import java.util.List;
+import net.sf.cglib.proxy.Enhancer;
 
 import static com.itacademy.database.util.SessionManager.getSession;
-import static java.util.Objects.isNull;
 
 public final class TaskFilter extends Filter<Task> {
 
@@ -36,11 +35,12 @@ public final class TaskFilter extends Filter<Task> {
         super(criteria, root, predicates, limit, offset);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static TaskBuilder builder() {
+        TaskBuilder original = new TaskBuilder();
+        return (TaskBuilder) Enhancer.create(TaskBuilder.class, getInterceptor(original));
     }
 
-    public static class Builder {
+    public static class TaskBuilder implements Builder<TaskFilter> {
 
         private CriteriaBuilder cb = getSession().getCriteriaBuilder();
         private CriteriaQuery<Task> criteria = cb.createQuery(Task.class);
@@ -54,53 +54,41 @@ public final class TaskFilter extends Filter<Task> {
         private Join<Homework, HomeworkId> sqHomeworkIdJoin = sqHomeworkJoin.join(Homework_.id);
         private Join<HomeworkId, Student> sqStudentJoin = sqHomeworkIdJoin.join(HomeworkId_.student);
         private Integer limit = DEFAULT_LIMIT;
-        private Integer offset = 0;
+        private Integer offset = DEFAULT_OFFSET;
 
-        public Builder doneByStudent(Long studentId) {
-            if (!isNull(studentId)) {
-                predicates.add(cb.in(root).value(
-                        doneByStudentSubQuery
-                                .select(subQueryRoot).where(cb.equal(sqStudentJoin.get(Student_.id), studentId)
-                        )));
-            }
+        public TaskBuilder doneByStudent(Long studentId) {
+            predicates.add(cb.in(root).value(
+                    doneByStudentSubQuery
+                            .select(subQueryRoot).where(cb.equal(sqStudentJoin.get(Student_.id), studentId)
+                    )));
             return this;
         }
 
-        public Builder toDoForStudent(Long studentId) {
-            if (!isNull(studentId)) {
-                predicates.add(cb.in(root).value(
-                        doneByStudentSubQuery
-                                .select(subQueryRoot).where(cb.equal(sqStudentJoin.get(Student_.id), studentId))
-                ).not());
-            }
+        public TaskBuilder toDoForStudent(Long studentId) {
+            predicates.add(cb.in(root).value(
+                    doneByStudentSubQuery
+                            .select(subQueryRoot).where(cb.equal(sqStudentJoin.get(Student_.id), studentId)
+                    )).not());
             return this;
         }
 
-        public Builder byCourse(Long courseId) {
-            if (!isNull(courseId)) {
-                predicates.add(cb.equal(courseJoin.get(Course_.id), courseId));
-            }
+        public TaskBuilder byCourse(Long courseId) {
+            predicates.add(cb.equal(courseJoin.get(Course_.id), courseId));
             return this;
         }
 
-        public Builder byProfessor(Long professorId) {
-            if (!isNull(professorId)) {
-                predicates.add(cb.equal(professorJoin.get(Professor_.id), professorId));
-            }
+        public TaskBuilder byProfessor(Long professorId) {
+            predicates.add(cb.equal(professorJoin.get(Professor_.id), professorId));
             return this;
         }
 
-        public Builder limit(Integer limit) {
-            if (!isNull(limit)) {
-                this.limit = limit;
-            }
+        public TaskBuilder limit(Integer limit) {
+            this.limit = limit;
             return this;
         }
 
-        public Builder offset(Integer offset) {
-            if (!isNull(offset)) {
-                this.offset = offset;
-            }
+        public TaskBuilder offset(Integer offset) {
+            this.offset = offset;
             return this;
         }
 
