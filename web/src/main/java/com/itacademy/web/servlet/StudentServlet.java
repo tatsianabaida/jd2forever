@@ -1,8 +1,9 @@
-package by.itacademy.web.servlet;
+package com.itacademy.web.servlet;
 
-import by.itacademy.web.util.JspPath;
 import com.itacademy.database.entity.Student;
 import com.itacademy.service.service.StudentService;
+import com.itacademy.web.util.JspPath;
+import com.itacademy.web.util.UrlPath;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
-@WebServlet("/students-list")
+@WebServlet(UrlPath.STUDENTS_LIST)
 public class StudentServlet extends HttpServlet {
 
     private final StudentService studentService = StudentService.getInstance();

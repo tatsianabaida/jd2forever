@@ -1,63 +1,49 @@
 package com.itacademy.database.entity;
 
+import com.itacademy.database.util.SessionManager;
 import lombok.Cleanup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
 
+import static com.itacademy.database.testdata.TestDataGenerator.createStudent;
 import static org.junit.Assert.assertNotNull;
 
 public class StudentTest {
 
-    private static final SessionFactory FACTORY = new Configuration().configure().buildSessionFactory();
+    private static SessionFactory factory = SessionManager.getFactory();
 
-    @AfterClass
-    public static void close() {
-        FACTORY.close();
+    @Before
+    public void cleanTable() {
+        @Cleanup Session session = factory.openSession();
+        session.beginTransaction();
+        session.createQuery("delete from Homework ").executeUpdate();
+        session.createQuery("delete from Task ").executeUpdate();
+        session.createQuery("delete from Course ").executeUpdate();
+        session.createQuery("delete from Student ").executeUpdate();
+        session.getTransaction().commit();
     }
 
     @Test
     public void checkSaveStudent() {
-        @Cleanup Session session = FACTORY.openSession();
+        @Cleanup Session session = factory.openSession();
         session.beginTransaction();
-        User bobckevich = new Student(
-                Person.builder()
-                        .firstName("Artem")
-                        .lastName("Bobckevich")
-                        .build(),
-                null,
-                "bobckevich@macademy.com",
-                "bobckevich",
-                Role.USER,
-                "unknown",
-                "sysadmin");
-        Serializable bobckevichId = session.save(bobckevich);
+        Serializable akulovId = session.save(createStudent());
         session.getTransaction().commit();
-        assertNotNull(bobckevichId);
+        assertNotNull(akulovId);
     }
 
     @Test
     public void checkGetStudent() {
-        @Cleanup Session session = FACTORY.openSession();
+        @Cleanup Session session = factory.openSession();
         session.beginTransaction();
-        Serializable bobckevichId = session.save(new Student(
-                Person.builder()
-                        .firstName("Artem")
-                        .lastName("Bobckevich")
-                        .build(),
-                null,
-                "bobckevich@macademy.com",
-                "bobckevich",
-                Role.USER,
-                "unknown",
-                "sysadmin"));
+        Serializable akulovId = session.save(createStudent());
         session.clear();
-        User bobckevich = session.get(Student.class, bobckevichId);
+        User akulov = session.get(Student.class, akulovId);
         session.getTransaction().commit();
-        assertNotNull(bobckevich);
+        assertNotNull(akulov);
     }
 }

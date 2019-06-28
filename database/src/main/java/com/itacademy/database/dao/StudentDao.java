@@ -1,23 +1,31 @@
 package com.itacademy.database.dao;
 
+import com.itacademy.database.entity.Mark;
 import com.itacademy.database.entity.Student;
-import lombok.Cleanup;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.query.Query;
+import com.querydsl.jpa.impl.JPAQuery;
 
 import java.util.List;
 
-public class StudentDao {
+import static com.itacademy.database.entity.QHomework.homework;
+import static com.itacademy.database.entity.QStudent.student;
+import static com.itacademy.database.util.SessionManager.getSession;
+
+public class StudentDao implements BaseDao<Long, Student> {
 
     private static final StudentDao INSTANCE = new StudentDao();
 
-    public List<Student> findAll() {
-        @Cleanup SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        @Cleanup Session session = sessionFactory.openSession();
-        Query<Student> query = session.createQuery("select e from Student e", Student.class);
-        return query.list();
+    public Double getAverageMark(Long studentId) {
+        List<Mark> marks = new JPAQuery<Mark>(getSession())
+                .select(homework.mark)
+                .from(homework)
+                .join(homework.id.student, student)
+                .where(student.id.eq(studentId).and(homework.mark.isNotNull()))
+                .fetch();
+
+        Integer marksSum = marks.stream()
+                .map(Mark::getDescription)
+                .reduce(0, (acc, next) -> acc + next);
+        return (double) Math.round((double) marksSum * 100 / marks.size()) / 100;
     }
 
     public static StudentDao getInstance() {

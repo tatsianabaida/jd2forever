@@ -1,56 +1,37 @@
 package com.itacademy.database.entity;
 
+import com.itacademy.database.util.SessionManager;
 import lombok.Cleanup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
 
+import static com.itacademy.database.testdata.TestDataGenerator.createTask;
 import static org.junit.Assert.assertNotNull;
 
 public class TaskTest {
 
-    private static final SessionFactory FACTORY = new Configuration().configure().buildSessionFactory();
+    private static SessionFactory factory = SessionManager.getFactory();
 
-    @AfterClass
-    public static void close() {
-        FACTORY.close();
+    @Before
+    public void cleanTable() {
+        @Cleanup Session session = factory.openSession();
+        session.beginTransaction();
+        session.createQuery("delete from Homework ").executeUpdate();
+        session.createQuery("delete from Task ").executeUpdate();
+        session.getTransaction().commit();
     }
 
     @Test
     public void checkSaveTask() {
-        @Cleanup Session session = FACTORY.openSession();
+        @Cleanup Session session = factory.openSession();
         session.beginTransaction();
-
-        Professor professor = new Professor(
-                Person.builder()
-                        .firstName("Dzianis")
-                        .lastName("Matveyenka")
-                        .build(),
-                Person.builder()
-                        .firstName("John")
-                        .lastName("Snow")
-                        .build(),
-                "matveyenka@macademy.com",
-                "matveyenka",
-                Role.ADMIN, "Industrial software development on Java",
-                "Game Of Thrones, Big Data, SQL, neural networks, algorithms and data structures",
-                Short.valueOf("7"));
-        Course course = Course.builder()
-                .professor(professor)
-                .name("JD2")
-                .build();
-        Task task = Task.builder()
-                .course(course)
-                .subject("Maven")
-                .exercise("Check point 1")
-                .build();
-
-        session.save(professor);
-        session.save(course);
+        Task task = createTask();
+        session.save(task.getCourse().getProfessor());
+        session.save(task.getCourse());
         Serializable taskId = session.save(task);
         session.getTransaction().commit();
         assertNotNull(taskId);
@@ -58,35 +39,11 @@ public class TaskTest {
 
     @Test
     public void checkGetTask() {
-        @Cleanup Session session = FACTORY.openSession();
+        @Cleanup Session session = factory.openSession();
         session.beginTransaction();
-
-        Professor professor = new Professor(
-                Person.builder()
-                        .firstName("Dzianis")
-                        .lastName("Matveyenka")
-                        .build(),
-                Person.builder()
-                        .firstName("John")
-                        .lastName("Snow")
-                        .build(),
-                "matveyenka@macademy.com",
-                "matveyenka",
-                Role.ADMIN, "Industrial software development on Java",
-                "Game Of Thrones, Big Data, SQL, neural networks, algorithms and data structures",
-                Short.valueOf("7"));
-        Course course = Course.builder()
-                .professor(professor)
-                .name("JD2")
-                .build();
-        Task task = Task.builder()
-                .course(course)
-                .subject("Maven")
-                .exercise("Check point 1")
-                .build();
-
-        session.save(professor);
-        session.save(course);
+        Task task = createTask();
+        session.save(task.getCourse().getProfessor());
+        session.save(task.getCourse());
         Serializable taskId = session.save(task);
         session.evict(task);
         Task taskFromDb = session.get(Task.class, taskId);

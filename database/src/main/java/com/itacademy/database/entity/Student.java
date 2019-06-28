@@ -20,7 +20,7 @@ import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ToString(exclude = "homeworks")
+@ToString(exclude = "homeworks", callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -43,9 +43,14 @@ public class Student extends User {
             inverseJoinColumns = @JoinColumn(name = "course_id"))
     private Set<Course> courses = new HashSet<>();
 
-    public Student(Person person, Person imaginaryPerson, String email, String password, Role role,
-                   String company, String currentPosition) {
-        super(person, imaginaryPerson, email, password, role);
+    public Student(Person person, String email, String password, Role role, String company, String currentPosition) {
+        super(person, email, password, role);
+        this.company = company;
+        this.currentPosition = currentPosition;
+    }
+
+    public Student(User user, String company, String currentPosition) {
+        super(user.getPerson(), user.getEmail(), user.getPassword(), user.getRole());
         this.company = company;
         this.currentPosition = currentPosition;
     }
