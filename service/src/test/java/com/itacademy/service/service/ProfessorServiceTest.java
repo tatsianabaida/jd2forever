@@ -1,33 +1,12 @@
 package com.itacademy.service.service;
 
-import com.itacademy.database.ProfessorTestDataImporter;
 import com.itacademy.database.dto.ProfessorFilterDto;
 import com.itacademy.database.entity.Professor;
-import com.itacademy.database.util.SessionManager;
-import lombok.Cleanup;
-import org.hibernate.Session;
+import java.util.List;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
-public class ProfessorServiceTest {
-
-    private final ProfessorService professorService = ProfessorService.getInstance();
-    private final ProfessorTestDataImporter professorTestDataImporter = ProfessorTestDataImporter
-            .getInstance();
-
-    @Before
-    public void cleanTable() {
-        @Cleanup Session session = SessionManager.getFactory().openSession();
-        session.beginTransaction();
-        session.createQuery("delete from Homework ").executeUpdate();
-        session.createQuery("delete from Task ").executeUpdate();
-        session.createQuery("delete from Course ").executeUpdate();
-        session.createQuery("delete from Professor ").executeUpdate();
-        session.getTransaction().commit();
-    }
+public class ProfessorServiceTest extends ServiceTest {
 
     @Test
     public void getAll() {

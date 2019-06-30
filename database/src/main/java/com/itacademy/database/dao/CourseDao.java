@@ -1,12 +1,8 @@
 package com.itacademy.database.dao;
 
 import com.itacademy.database.entity.Course;
+import org.springframework.stereotype.Repository;
 
-public class CourseDao implements BaseDao<Long, Course> {
-
-    private static final CourseDao INSTANCE = new CourseDao();
-
-    public static CourseDao getInstance() {
-        return INSTANCE;
-    }
+@Repository
+public class CourseDao extends BaseDao<Long, Course> {
 }

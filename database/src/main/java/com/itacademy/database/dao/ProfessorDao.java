@@ -2,12 +2,20 @@ package com.itacademy.database.dao;
 
 import com.itacademy.database.entity.Professor;
 import com.itacademy.database.filter.ProfessorFilter;
+import com.querydsl.jpa.impl.JPAQuery;
+import java.util.HashSet;
+import java.util.Set;
+import org.springframework.stereotype.Repository;
 
-public class ProfessorDao implements BaseDao<Long, Professor>, Filterable<Professor, ProfessorFilter> {
+import static com.itacademy.database.entity.QProfessor.professor;
 
-    private static final ProfessorDao INSTANCE = new ProfessorDao();
+@Repository
+public class ProfessorDao extends BaseDaoFilterable<Long, Professor, ProfessorFilter> {
 
-    public static ProfessorDao getInstance() {
-        return INSTANCE;
+    public Set<String> getSpecialities() {
+        return new HashSet<>(new JPAQuery<String>(getSessionFactory().getCurrentSession())
+                .select(professor.speciality)
+                .from(professor)
+                .fetch());
     }
 }

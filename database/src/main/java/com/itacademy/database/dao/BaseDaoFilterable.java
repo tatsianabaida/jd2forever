@@ -2,20 +2,17 @@ package com.itacademy.database.dao;
 
 import com.itacademy.database.entity.BaseEntity;
 import com.itacademy.database.filter.Filter;
-import org.hibernate.Session;
-
-import javax.persistence.criteria.CriteriaBuilder;
+import java.io.Serializable;
+import java.util.List;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
+import org.hibernate.Session;
 
-import static com.itacademy.database.util.SessionManager.getSession;
+public abstract class BaseDaoFilterable<T extends Serializable, E extends BaseEntity<T>, F extends Filter<E>>
+        extends BaseDao<T, E> {
 
-public interface Filterable<E extends BaseEntity, F extends Filter<E>> {
-
-    default List<E> getAll(F filter) {
-        Session session = getSession();
-        CriteriaBuilder cb = filter.getCb();
+    public List<E> getAll(F filter) {
+        Session session = getSessionFactory().getCurrentSession();
         CriteriaQuery<E> criteria = filter.getCriteria();
         Root<E> root = filter.getRoot();
         criteria.select(root).where(

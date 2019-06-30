@@ -21,40 +21,58 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
+import lombok.NoArgsConstructor;
 import net.sf.cglib.proxy.Enhancer;
-
-import static com.itacademy.database.util.SessionManager.getSession;
+import org.hibernate.SessionFactory;
 
 public final class TaskFilter extends Filter<Task> {
 
-    private TaskFilter(CriteriaQuery<Task> criteria,
+    private TaskFilter(CriteriaBuilder cb,
+                       CriteriaQuery<Task> criteria,
                        Root<Task> root,
                        Predicate[] predicates,
                        Integer limit,
                        Integer offset) {
-        super(criteria, root, predicates, limit, offset);
+        super(cb, criteria, root, predicates, limit, offset);
     }
 
-    public static TaskBuilder builder() {
-        TaskBuilder original = new TaskBuilder();
+    public static TaskBuilder builder(SessionFactory sessionFactory) {
+        TaskBuilder original = new TaskBuilder(sessionFactory);
         return (TaskBuilder) Enhancer.create(TaskBuilder.class, getInterceptor(original));
     }
 
+    @NoArgsConstructor
     public static class TaskBuilder implements Builder<TaskFilter> {
 
-        private CriteriaBuilder cb = getSession().getCriteriaBuilder();
-        private CriteriaQuery<Task> criteria = cb.createQuery(Task.class);
-        private Root<Task> root = criteria.from(Task.class);
-        private List<Predicate> predicates = new ArrayList<>();
-        private Join<Task, Course> courseJoin = root.join(Task_.course);
-        private Join<Course, Professor> professorJoin = courseJoin.join(Course_.professor);
-        private Subquery<Task> doneByStudentSubQuery = criteria.subquery(Task.class);
-        private Root<Task> subQueryRoot = doneByStudentSubQuery.from(Task.class);
-        private SetJoin<Task, Homework> sqHomeworkJoin = subQueryRoot.join(Task_.homeworks);
-        private Join<Homework, HomeworkId> sqHomeworkIdJoin = sqHomeworkJoin.join(Homework_.id);
-        private Join<HomeworkId, Student> sqStudentJoin = sqHomeworkIdJoin.join(HomeworkId_.student);
-        private Integer limit = DEFAULT_LIMIT;
-        private Integer offset = DEFAULT_OFFSET;
+        private CriteriaBuilder cb;
+        private CriteriaQuery<Task> criteria;
+        private Root<Task> root;
+        private List<Predicate> predicates;
+        private Join<Task, Course> courseJoin;
+        private Join<Course, Professor> professorJoin;
+        private Subquery<Task> doneByStudentSubQuery;
+        private Root<Task> subQueryRoot;
+        private SetJoin<Task, Homework> sqHomeworkJoin;
+        private Join<Homework, HomeworkId> sqHomeworkIdJoin;
+        private Join<HomeworkId, Student> sqStudentJoin;
+        private Integer limit;
+        private Integer offset;
+
+        private TaskBuilder(SessionFactory sessionFactory) {
+            cb = sessionFactory.getCurrentSession().getCriteriaBuilder();
+            criteria = cb.createQuery(Task.class);
+            root = criteria.from(Task.class);
+            predicates = new ArrayList<>();
+            courseJoin = root.join(Task_.course);
+            professorJoin = courseJoin.join(Course_.professor);
+            doneByStudentSubQuery = criteria.subquery(Task.class);
+            subQueryRoot = doneByStudentSubQuery.from(Task.class);
+            sqHomeworkJoin = subQueryRoot.join(Task_.homeworks);
+            sqHomeworkIdJoin = sqHomeworkJoin.join(Homework_.id);
+            sqStudentJoin = sqHomeworkIdJoin.join(HomeworkId_.student);
+            limit = DEFAULT_LIMIT;
+            offset = DEFAULT_OFFSET;
+        }
 
         public TaskBuilder doneByStudent(Long studentId) {
             predicates.add(cb.in(root).value(
@@ -93,7 +111,7 @@ public final class TaskFilter extends Filter<Task> {
         }
 
         public TaskFilter build() {
-            return new TaskFilter(criteria, root, predicates.toArray(Predicate[]::new), limit, offset);
+            return new TaskFilter(cb, criteria, root, predicates.toArray(Predicate[]::new), limit, offset);
         }
     }
 }

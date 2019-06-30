@@ -3,12 +3,8 @@ package com.itacademy.database.dao;
 import com.itacademy.database.entity.Homework;
 import com.itacademy.database.entity.HomeworkId;
 import com.itacademy.database.filter.HomeworkFilter;
+import org.springframework.stereotype.Repository;
 
-public class HomeworkDao implements BaseDao<HomeworkId, Homework>, Filterable<Homework, HomeworkFilter> {
-
-    private static final HomeworkDao INSTANCE = new HomeworkDao();
-
-    public static HomeworkDao getInstance() {
-        return INSTANCE;
-    }
+@Repository
+public class HomeworkDao extends BaseDaoFilterable<HomeworkId, Homework, HomeworkFilter> {
 }
