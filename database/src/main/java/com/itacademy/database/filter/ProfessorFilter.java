@@ -10,34 +10,45 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.sf.cglib.proxy.Enhancer;
-
-import static com.itacademy.database.util.SessionManager.getSession;
+import org.hibernate.SessionFactory;
 
 @Getter
 public final class ProfessorFilter extends Filter<Professor> {
 
-    private ProfessorFilter(CriteriaQuery<Professor> criteria,
+    private ProfessorFilter(CriteriaBuilder cb,
+                            CriteriaQuery<Professor> criteria,
                             Root<Professor> root,
                             Predicate[] predicates,
                             Integer limit,
                             Integer offset) {
-        super(criteria, root, predicates, limit, offset);
+        super(cb, criteria, root, predicates, limit, offset);
     }
 
-    public static ProfessorBuilder builder() {
-        ProfessorBuilder original = new ProfessorBuilder();
+    public static ProfessorBuilder builder(SessionFactory sessionFactory) {
+        ProfessorBuilder original = new ProfessorBuilder(sessionFactory);
         return (ProfessorBuilder) Enhancer.create(ProfessorBuilder.class, getInterceptor(original));
     }
 
+    @NoArgsConstructor
     public static class ProfessorBuilder implements Builder<ProfessorFilter> {
 
-        private CriteriaBuilder cb = getSession().getCriteriaBuilder();
-        private CriteriaQuery<Professor> criteria = cb.createQuery(Professor.class);
-        private Root<Professor> root = criteria.from(Professor.class);
-        private List<Predicate> predicates = new ArrayList<>();
-        private Integer limit = DEFAULT_LIMIT;
-        private Integer offset = DEFAULT_OFFSET;
+        private CriteriaBuilder cb;
+        private CriteriaQuery<Professor> criteria;
+        private Root<Professor> root;
+        private List<Predicate> predicates;
+        private Integer limit;
+        private Integer offset;
+
+        private ProfessorBuilder(SessionFactory sessionFactory) {
+            cb = sessionFactory.getCurrentSession().getCriteriaBuilder();
+            criteria = cb.createQuery(Professor.class);
+            root = criteria.from(Professor.class);
+            predicates = new ArrayList<>();
+            limit = DEFAULT_LIMIT;
+            offset = DEFAULT_OFFSET;
+        }
 
         public ProfessorBuilder firstName(String firstName) {
             predicates.add(cb.like(root.get(Professor_.person).get(Person_.firstName), firstName));
@@ -70,7 +81,7 @@ public final class ProfessorFilter extends Filter<Professor> {
         }
 
         public ProfessorFilter build() {
-            return new ProfessorFilter(criteria, root, predicates.toArray(Predicate[]::new), limit, offset);
+            return new ProfessorFilter(cb, criteria, root, predicates.toArray(Predicate[]::new), limit, offset);
         }
     }
 }

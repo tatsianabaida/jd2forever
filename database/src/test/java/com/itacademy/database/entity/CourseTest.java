@@ -1,49 +1,29 @@
 package com.itacademy.database.entity;
 
-import com.itacademy.database.util.SessionManager;
-import lombok.Cleanup;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.Serializable;
 import java.util.Arrays;
+import org.hibernate.Session;
+import org.junit.Test;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createCourse;
 import static com.itacademy.database.testdata.TestDataGenerator.createStudent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class CourseTest {
-
-    private static SessionFactory factory = SessionManager.getFactory();
-
-    @Before
-    public void cleanTable() {
-        @Cleanup Session session = factory.openSession();
-        session.beginTransaction();
-        session.createQuery("delete from Homework ").executeUpdate();
-        session.createQuery("delete from Task ").executeUpdate();
-        session.createQuery("delete from Course ").executeUpdate();
-        session.getTransaction().commit();
-    }
+public class CourseTest extends EntityTest {
 
     @Test
     public void checkSaveCourse() {
-        @Cleanup Session session = factory.openSession();
-        session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
         Course course = createCourse();
         session.save(course.getProfessor());
         Serializable courseId = session.save(course);
-        session.getTransaction().commit();
         assertNotNull(courseId);
     }
 
     @Test
     public void checkGetCourse() {
-        @Cleanup Session session = factory.openSession();
-        session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
         Course course = createCourse();
         Student student1 = createStudent();
         Student student2 = createStudent();
@@ -59,7 +39,6 @@ public class CourseTest {
         Course courseFromDb = session.get(Course.class, courseId);
         int studentAmount = courseFromDb.getStudents().size();
 
-        session.getTransaction().commit();
         assertNotNull(courseFromDb);
         assertEquals(2, studentAmount);
     }

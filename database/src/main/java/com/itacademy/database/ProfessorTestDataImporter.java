@@ -4,16 +4,19 @@ import com.itacademy.database.dao.ProfessorDao;
 import com.itacademy.database.entity.Person;
 import com.itacademy.database.entity.Professor;
 import com.itacademy.database.entity.User;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static com.itacademy.database.entity.Role.ADMIN;
 
+@Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ProfessorTestDataImporter {
 
-    private static final ProfessorTestDataImporter INSTANCE = new ProfessorTestDataImporter();
-    private final ProfessorDao professorDao = ProfessorDao.getInstance();
+    private final ProfessorDao professorDao;
 
     public void importTestData() {
         Professor professor1 = new Professor(User.builder()
@@ -142,9 +145,5 @@ public class ProfessorTestDataImporter {
         }};
 
         professors.forEach(professorDao::save);
-    }
-
-    public static ProfessorTestDataImporter getInstance() {
-        return INSTANCE;
     }
 }

@@ -4,34 +4,40 @@ import com.itacademy.database.dto.ProfessorFilterDto;
 import com.itacademy.database.dto.ProfessorsPageDto;
 import com.itacademy.database.entity.Professor;
 import com.itacademy.database.util.StringUtils;
+import com.itacademy.service.config.ServiceConfig;
 import com.itacademy.service.service.ProfessorService;
 import com.itacademy.web.util.JspPath;
-
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.Getter;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import static com.itacademy.database.filter.Filter.DEFAULT_LIMIT;
+import static com.itacademy.database.filter.Builder.DEFAULT_LIMIT;
+import static com.itacademy.database.filter.Builder.DEFAULT_OFFSET;
 import static com.itacademy.web.util.UrlPath.PROFESSOR_FILTER;
 
 @WebServlet(PROFESSOR_FILTER)
 public class ProfessorFilterServlet extends HttpServlet {
 
-    private final ProfessorService professorService = ProfessorService.getInstance();
+    @Getter
+    private static AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ServiceConfig.class);
+    private ProfessorService professorService;
+
+    @Override
+    public void init() {
+        professorService = context.getBean(ProfessorService.class);
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Set<String> speciatities = professorService.findAll()
-                .stream()
-                .map(Professor::getSpeciality)
-                .collect(Collectors.toSet());
+        Set<String> speciatities = professorService.getSpecialities();
         req.setAttribute("specialities", speciatities);
         getServletContext()
                 .getRequestDispatcher(JspPath.get("professor-filter"))
@@ -41,6 +47,7 @@ public class ProfessorFilterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Integer limit = StringUtils.isNotEmpty(req.getParameter("limit"))
+                && Integer.valueOf(req.getParameter("limit")) > 0
                 ? Integer.valueOf(req.getParameter("limit"))
                 : DEFAULT_LIMIT;
         ProfessorFilterDto professorFilterDto = ProfessorFilterDto.builder()
@@ -49,7 +56,7 @@ public class ProfessorFilterServlet extends HttpServlet {
                 .speciality(req.getParameter("speciality"))
                 .email(req.getParameter("email"))
                 .limit(limit)
-                .offset(0)
+                .offset(DEFAULT_OFFSET)
                 .build();
         List<Professor> professorsForPage = professorService.getAll(professorFilterDto);
         List<ProfessorsPageDto> pages = new ArrayList<>();

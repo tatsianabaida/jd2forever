@@ -19,38 +19,56 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import lombok.NoArgsConstructor;
 import net.sf.cglib.proxy.Enhancer;
-
-import static com.itacademy.database.util.SessionManager.getSession;
+import org.hibernate.SessionFactory;
 
 public final class HomeworkFilter extends Filter<Homework> {
 
-    private HomeworkFilter(CriteriaQuery<Homework> criteria,
+    private HomeworkFilter(CriteriaBuilder cb,
+                           CriteriaQuery<Homework> criteria,
                            Root<Homework> root,
                            Predicate[] predicates,
                            Integer limit,
                            Integer offset) {
-        super(criteria, root, predicates, limit, offset);
+        super(cb, criteria, root, predicates, limit, offset);
     }
 
-    public static HomeworkBuilder builder() {
-        HomeworkBuilder original = new HomeworkBuilder();
+
+    public static HomeworkBuilder builder(SessionFactory sessionFactory) {
+        HomeworkBuilder original = new HomeworkBuilder(sessionFactory);
         return (HomeworkBuilder) Enhancer.create(HomeworkBuilder.class, getInterceptor(original));
     }
 
+    @NoArgsConstructor
     public static class HomeworkBuilder implements Builder<HomeworkFilter> {
 
-        private CriteriaBuilder cb = getSession().getCriteriaBuilder();
-        private CriteriaQuery<Homework> criteria = cb.createQuery(Homework.class);
-        private Root<Homework> root = criteria.from(Homework.class);
-        private List<Predicate> predicates = new ArrayList<>();
-        private Join<Homework, HomeworkId> homeworkIdJoin = root.join(Homework_.id);
-        private Join<HomeworkId, Student> studentJoin = homeworkIdJoin.join(HomeworkId_.student);
-        private Join<HomeworkId, Task> taskJoin = homeworkIdJoin.join(HomeworkId_.task);
-        private Join<Task, Course> courseJoin = taskJoin.join(Task_.course);
-        private Join<Course, Professor> professorJoin = courseJoin.join(Course_.professor);
-        private Integer limit = DEFAULT_LIMIT;
-        private Integer offset = DEFAULT_OFFSET;
+        private CriteriaBuilder cb;
+        private CriteriaQuery<Homework> criteria;
+        private Root<Homework> root;
+        private List<Predicate> predicates;
+        private Join<Homework, HomeworkId> homeworkIdJoin;
+        private Join<HomeworkId, Student> studentJoin;
+        private Join<HomeworkId, Task> taskJoin;
+        private Join<Task, Course> courseJoin;
+        private Join<Course, Professor> professorJoin;
+        private Integer limit;
+        private Integer offset;
+
+
+        private HomeworkBuilder(SessionFactory sessionFactory) {
+            cb = sessionFactory.getCurrentSession().getCriteriaBuilder();
+            criteria = cb.createQuery(Homework.class);
+            root = criteria.from(Homework.class);
+            predicates = new ArrayList<>();
+            homeworkIdJoin = root.join(Homework_.id);
+            studentJoin = homeworkIdJoin.join(HomeworkId_.student);
+            taskJoin = homeworkIdJoin.join(HomeworkId_.task);
+            courseJoin = taskJoin.join(Task_.course);
+            professorJoin = courseJoin.join(Course_.professor);
+            limit = DEFAULT_LIMIT;
+            offset = DEFAULT_OFFSET;
+        }
 
         public HomeworkBuilder byStudent(Long studentId) {
             predicates.add(cb.equal(studentJoin.get(Student_.id), studentId));
@@ -92,7 +110,7 @@ public final class HomeworkFilter extends Filter<Homework> {
         }
 
         public HomeworkFilter build() {
-            return new HomeworkFilter(criteria, root, predicates.toArray(Predicate[]::new), limit, offset);
+            return new HomeworkFilter(cb, criteria, root, predicates.toArray(Predicate[]::new), limit, offset);
         }
     }
 }

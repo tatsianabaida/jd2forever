@@ -2,14 +2,9 @@ package com.itacademy.database.dao;
 
 import com.itacademy.database.entity.Role;
 import com.itacademy.database.entity.User;
-import com.itacademy.database.util.SessionManager;
-import lombok.Cleanup;
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.List;
 import java.util.Optional;
+import org.junit.Test;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createAdminUser;
 import static com.itacademy.database.testdata.TestDataGenerator.createDefaultUser;
@@ -19,22 +14,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class UserDaoTest {
-
-    private final UserDao userDao = UserDao.getInstance();
-
-    @Before
-    public void cleanTable() {
-        @Cleanup Session session = SessionManager.getFactory().openSession();
-        session.beginTransaction();
-        session.createQuery("delete from Homework ").executeUpdate();
-        session.createQuery("delete from Task ").executeUpdate();
-        session.createQuery("delete from Course ").executeUpdate();
-        session.createQuery("delete from Professor ").executeUpdate();
-        session.createQuery("delete from Student ").executeUpdate();
-        session.createQuery("delete from User ").executeUpdate();
-        session.getTransaction().commit();
-    }
+public class UserDaoTest extends DaoTest {
 
     @Test
     public void checkFindById() {

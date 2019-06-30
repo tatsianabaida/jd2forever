@@ -2,30 +2,13 @@ package com.itacademy.database.dao;
 
 import com.itacademy.database.entity.Professor;
 import com.itacademy.database.filter.ProfessorFilter;
-import com.itacademy.database.util.SessionManager;
 import java.util.List;
-import lombok.Cleanup;
-import org.hibernate.Session;
-import org.junit.Before;
 import org.junit.Test;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createProfessor;
 import static org.junit.Assert.assertEquals;
 
-public class ProfessorDaoTest {
-
-    private final ProfessorDao professorDao = ProfessorDao.getInstance();
-
-    @Before
-    public void cleanTable() {
-        @Cleanup Session session = SessionManager.getFactory().openSession();
-        session.beginTransaction();
-        session.createQuery("delete from Homework ").executeUpdate();
-        session.createQuery("delete from Task ").executeUpdate();
-        session.createQuery("delete from Course ").executeUpdate();
-        session.createQuery("delete from Professor ").executeUpdate();
-        session.getTransaction().commit();
-    }
+public class ProfessorDaoTest extends DaoTest {
 
     @Test
     public void checkGetAllByFilter() {
@@ -37,7 +20,7 @@ public class ProfessorDaoTest {
         professorDao.save(matveyenka2);
         professorDao.save(other);
         List<Professor> all = professorDao.findAll();
-        List<Professor> allMatveyenka = professorDao.getAll(ProfessorFilter.builder()
+        List<Professor> allMatveyenka = professorDao.getAll(ProfessorFilter.builder(sessionFactory)
                 .lastName("Matveyenka")
                 .firstName(null)
                 .offset(null)
@@ -63,13 +46,13 @@ public class ProfessorDaoTest {
         professorDao.save(professor1);
         professorDao.save(professor2);
 
-        List<Professor> allByFirstName = professorDao.getAll(ProfessorFilter.builder()
+        List<Professor> allByFirstName = professorDao.getAll(ProfessorFilter.builder(sessionFactory)
                 .firstName("NewFN")
                 .speciality(null)
                 .limit(null)
                 .build());
 
-        List<Professor> allByFirstNameAndEmail = professorDao.getAll(ProfessorFilter.builder()
+        List<Professor> allByFirstNameAndEmail = professorDao.getAll(ProfessorFilter.builder(sessionFactory)
                 .firstName("NewFN")
                 .lastName(null)
                 .speciality(null)

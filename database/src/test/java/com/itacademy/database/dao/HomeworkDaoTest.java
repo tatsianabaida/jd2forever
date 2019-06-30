@@ -3,30 +3,12 @@ package com.itacademy.database.dao;
 import com.itacademy.database.entity.Homework;
 import com.itacademy.database.filter.HomeworkFilter;
 import java.util.List;
-import lombok.Cleanup;
-import org.hibernate.Session;
-import org.junit.Before;
 import org.junit.Test;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
-import static com.itacademy.database.util.SessionManager.getSession;
 import static org.junit.Assert.assertEquals;
 
-public class HomeworkDaoTest {
-
-    private final StudentDao studentDao = StudentDao.getInstance();
-    private final ProfessorDao professorDao = ProfessorDao.getInstance();
-    private final CourseDao courseDao = CourseDao.getInstance();
-    private final TaskDao taskDao = TaskDao.getInstance();
-    private final HomeworkDao homeworkDao = HomeworkDao.getInstance();
-
-    @Before
-    public void cleanTable() {
-        @Cleanup Session session = getSession().getSessionFactory().openSession();
-        session.beginTransaction();
-        session.createQuery("delete from Homework h ").executeUpdate();
-        session.getTransaction().commit();
-    }
+public class HomeworkDaoTest extends DaoTest {
 
     @Test
     public void getByFilter() {
@@ -51,21 +33,21 @@ public class HomeworkDaoTest {
         homeworkDao.save(homework2);
         homeworkDao.save(homework3);
 
-        List<Homework> allByTaskAndProfessorWithoutMark = homeworkDao.getAll(HomeworkFilter.builder()
+        List<Homework> allByTaskAndProfessorWithoutMark = homeworkDao.getAll(HomeworkFilter.builder(sessionFactory)
                 .withMark(false)
                 .byTask(task2Id)
                 .byStudent(null)
                 .byCourse(null)
                 .forProfessor(professor2Id)
                 .build());
-        List<Homework> allByCourseAndStudentWithMark = homeworkDao.getAll(HomeworkFilter.builder()
+        List<Homework> allByCourseAndStudentWithMark = homeworkDao.getAll(HomeworkFilter.builder(sessionFactory)
                 .byCourse(course1Id)
                 .byStudent(student2Id)
                 .withMark(true)
                 .byTask(null)
                 .forProfessor(null)
                 .build());
-        List<Homework> allLimitAndOffset = homeworkDao.getAll(HomeworkFilter.builder()
+        List<Homework> allLimitAndOffset = homeworkDao.getAll(HomeworkFilter.builder(sessionFactory)
                 .limit(1)
                 .offset(1)
                 .withMark(null)

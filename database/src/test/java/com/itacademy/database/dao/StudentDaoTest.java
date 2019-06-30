@@ -4,30 +4,12 @@ import com.itacademy.database.entity.Course;
 import com.itacademy.database.entity.Homework;
 import com.itacademy.database.entity.Mark;
 import com.itacademy.database.entity.Student;
-import lombok.Cleanup;
-import org.hibernate.Session;
-import org.junit.Before;
 import org.junit.Test;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
-import static com.itacademy.database.util.SessionManager.getSession;
 import static org.junit.Assert.assertEquals;
 
-public class StudentDaoTest {
-
-    private final StudentDao studentDao = StudentDao.getInstance();
-    private final ProfessorDao professorDao = ProfessorDao.getInstance();
-    private final CourseDao courseDao = CourseDao.getInstance();
-    private final TaskDao taskDao = TaskDao.getInstance();
-    private final HomeworkDao homeworkDao = HomeworkDao.getInstance();
-
-    @Before
-    public void cleanTable() {
-        @Cleanup Session session = getSession().getSessionFactory().openSession();
-        session.beginTransaction();
-        session.createQuery("delete from Homework h ").executeUpdate();
-        session.getTransaction().commit();
-    }
+public class StudentDaoTest extends DaoTest {
 
     @Test
     public void getAverageMark() {

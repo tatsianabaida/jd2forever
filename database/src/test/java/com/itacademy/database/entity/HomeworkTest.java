@@ -1,33 +1,17 @@
 package com.itacademy.database.entity;
 
-import com.itacademy.database.util.SessionManager;
-import lombok.Cleanup;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.Serializable;
+import org.hibernate.Session;
+import org.junit.Test;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
 import static org.junit.Assert.assertNotNull;
 
-public class HomeworkTest {
-
-    private static SessionFactory factory = SessionManager.getFactory();
-
-    @Before
-    public void cleanTable() {
-        @Cleanup Session session = factory.openSession();
-        session.beginTransaction();
-        session.createQuery("delete from Homework h ").executeUpdate();
-        session.getTransaction().commit();
-    }
+public class HomeworkTest extends EntityTest {
 
     @Test
     public void checkSaveHomework() {
-        @Cleanup Session session = factory.openSession();
-        session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
         Homework homework = createHomework();
         Course course = homework.getId().getTask().getCourse();
 
@@ -36,14 +20,12 @@ public class HomeworkTest {
         session.save(course);
         session.save(homework.getId().getTask());
         Serializable homeworkId = session.save(homework);
-        session.getTransaction().commit();
         assertNotNull(homeworkId);
     }
 
     @Test
     public void checkGetHomework() {
-        @Cleanup Session session = factory.openSession();
-        session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
         Homework homework = createHomework();
         Course course = homework.getId().getTask().getCourse();
 

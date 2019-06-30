@@ -5,33 +5,14 @@ import com.itacademy.database.entity.Student;
 import com.itacademy.database.entity.Task;
 import com.itacademy.database.filter.TaskFilter;
 import java.util.List;
-import lombok.Cleanup;
-import org.hibernate.Session;
-import org.junit.Before;
 import org.junit.Test;
 
 import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
 import static com.itacademy.database.testdata.TestDataGenerator.createStudent;
 import static com.itacademy.database.testdata.TestDataGenerator.createTask;
-import static com.itacademy.database.util.SessionManager.getSession;
 import static org.junit.Assert.assertEquals;
 
-public class TaskDaoTest {
-
-    private final StudentDao studentDao = StudentDao.getInstance();
-    private final ProfessorDao professorDao = ProfessorDao.getInstance();
-    private final CourseDao courseDao = CourseDao.getInstance();
-    private final TaskDao taskDao = TaskDao.getInstance();
-    private final HomeworkDao homeworkDao = HomeworkDao.getInstance();
-
-    @Before
-    public void cleanTable() {
-        @Cleanup Session session = getSession().getSessionFactory().openSession();
-        session.beginTransaction();
-        session.createQuery("delete from Homework ").executeUpdate();
-        session.createQuery("delete from Task ").executeUpdate();
-        session.getTransaction().commit();
-    }
+public class TaskDaoTest extends DaoTest {
 
     @Test
     public void getAllDoneAndToDoByFilter() {
@@ -61,13 +42,13 @@ public class TaskDaoTest {
         homeworkDao.save(homework2);
 
         List<Task> all = taskDao.findAll();
-        List<Task> allDoneByStudent = taskDao.getAll(TaskFilter.builder()
+        List<Task> allDoneByStudent = taskDao.getAll(TaskFilter.builder(sessionFactory)
                 .doneByStudent(student1Id)
                 .build());
-        List<Task> allToDoForStudent = taskDao.getAll(TaskFilter.builder()
+        List<Task> allToDoForStudent = taskDao.getAll(TaskFilter.builder(sessionFactory)
                 .toDoForStudent(student1Id)
                 .build());
-        List<Task> limitAndOffset = taskDao.getAll(TaskFilter.builder()
+        List<Task> limitAndOffset = taskDao.getAll(TaskFilter.builder(sessionFactory)
                 .offset(1)
                 .limit(1)
                 .build());
@@ -100,7 +81,7 @@ public class TaskDaoTest {
         taskDao.save(task3);
 
         List<Task> all = taskDao.findAll();
-        List<Task> allByProfessor = taskDao.getAll(TaskFilter.builder()
+        List<Task> allByProfessor = taskDao.getAll(TaskFilter.builder(sessionFactory)
                 .byProfessor(professor3Id)
                 .limit(null)
                 .offset(null)
@@ -108,11 +89,11 @@ public class TaskDaoTest {
                 .doneByStudent(null)
                 .toDoForStudent(null)
                 .build());
-        List<Task> allByCourse = taskDao.getAll(TaskFilter.builder()
+        List<Task> allByCourse = taskDao.getAll(TaskFilter.builder(sessionFactory)
                 .byCourse(course3Id)
                 .byProfessor(null)
                 .build());
-        List<Task> allByCourseAndProfessor = taskDao.getAll(TaskFilter.builder()
+        List<Task> allByCourseAndProfessor = taskDao.getAll(TaskFilter.builder(sessionFactory)
                 .byCourse(course1Id)
                 .toDoForStudent(null)
                 .byProfessor(professor3Id)
