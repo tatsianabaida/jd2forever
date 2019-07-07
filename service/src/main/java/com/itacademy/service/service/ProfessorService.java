@@ -10,9 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Transactional
 public class ProfessorService {
 
     private final ProfessorDao professorDao;

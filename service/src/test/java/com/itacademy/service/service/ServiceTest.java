@@ -17,7 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public abstract class ServiceTest {
 
-
+    @Autowired
+    public LoginService loginService;
+    @Autowired
+    public StudentService studentService;
     @Autowired
     public ProfessorService professorService;
     @Autowired

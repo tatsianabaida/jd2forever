@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
 
-import static com.itacademy.database.testdata.TestDataGenerator.createAdminUser;
-import static com.itacademy.database.testdata.TestDataGenerator.createDefaultUser;
-import static com.itacademy.database.testdata.TestDataGenerator.createProfessor;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createAdminUser;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createDefaultUser;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createProfessor;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class UserDaoTest extends DaoTest {
@@ -61,5 +63,29 @@ public class UserDaoTest extends DaoTest {
         userFromDb = userDao.findById(user.getId());
         assertEquals(userFromDb, Optional.empty());
 
+    }
+
+    @Test
+    public void findByUsername() {
+        User akulov = createDefaultUser();
+        String username = akulov.getEmail();
+        userDao.save(akulov);
+        assertNotNull(userDao.findByUsername(username));
+
+        akulov.setEmail("newEmail@macademy.com");
+        userDao.update(akulov);
+        assertNull(userDao.findByUsername(username));
+    }
+
+    @Test
+    public void emailExists() {
+        User akulov = createDefaultUser();
+        String firstEmail = akulov.getEmail();
+        userDao.save(akulov);
+        assertTrue(userDao.emailExists(firstEmail));
+
+        akulov.setEmail("newEmail@macademy.com");
+        userDao.update(akulov);
+        assertFalse(userDao.emailExists(firstEmail));
     }
 }

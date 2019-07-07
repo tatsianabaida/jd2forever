@@ -1,5 +1,6 @@
 package com.itacademy.database.dao;
 
+import com.itacademy.database.ProfessorTestDataImporter;
 import com.itacademy.database.entity.EntityTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,4 +18,6 @@ public abstract class DaoTest extends EntityTest {
     public TaskDao taskDao;
     @Autowired
     public HomeworkDao homeworkDao;
+    @Autowired
+    public ProfessorTestDataImporter professorTestDataImporter;
 }

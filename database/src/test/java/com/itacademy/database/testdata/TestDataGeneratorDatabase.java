@@ -8,6 +8,7 @@ import com.itacademy.database.entity.Professor;
 import com.itacademy.database.entity.Student;
 import com.itacademy.database.entity.Task;
 import com.itacademy.database.entity.User;
+import java.util.Random;
 import lombok.experimental.UtilityClass;
 
 import static com.itacademy.database.entity.Mark.FIVE;
@@ -15,7 +16,7 @@ import static com.itacademy.database.entity.Role.ADMIN;
 import static com.itacademy.database.entity.Role.USER;
 
 @UtilityClass
-public class TestDataGenerator {
+public class TestDataGeneratorDatabase {
 
     public static User createDefaultUser() {
         return User.builder()
@@ -23,7 +24,7 @@ public class TestDataGenerator {
                         .firstName("Alexander")
                         .lastName("Akulov")
                         .build())
-                .email("akulov@macademy.com")
+                .email(new Random().nextInt() + "akulov@macademy.com")
                 .password("akulov")
                 .role(USER)
                 .build();
@@ -35,7 +36,7 @@ public class TestDataGenerator {
                         .firstName("Dzianis")
                         .lastName("Matveyenka")
                         .build())
-                .email("matveyenka@macademy.com")
+                .email(new Random().nextInt() + "matveyenka@macademy.com")
                 .password("matveyenka")
                 .role(ADMIN)
                 .build();

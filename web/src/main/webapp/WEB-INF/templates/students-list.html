@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><title>Matveyenka academy</title>
+    <link rel="icon" href="https://pbs.twimg.com/media/D27t5xjXQAAiJv8.png"/>
+    <style>
+        body {
+            background-color: azure;
+        }
+    </style>
+</head>
+<body>
+<div th:each="student:${studentsList}">
+    <span th:text="|${student.person.lastName} ${student.person.firstName}|">Student's name</span>
+
+    <br/><span>Email: </span>
+    <span th:text="${student.email}">Email</span><br/><br/>
+</div>
+</body>
+</html>

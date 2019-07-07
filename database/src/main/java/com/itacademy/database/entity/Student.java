@@ -1,11 +1,7 @@
 package com.itacademy.database.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,8 +11,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import static javax.persistence.FetchType.EAGER;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -34,10 +35,10 @@ public class Student extends User {
     @Column(name = "current_position")
     private String currentPosition;
 
-    @OneToMany(mappedBy = "id.student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "id.student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = EAGER)
     private Set<Homework> homeworks = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = EAGER)
     @JoinTable(name = "course_student", schema = "m_academy_storage",
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id"))

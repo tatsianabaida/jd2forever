@@ -1,12 +1,11 @@
 package com.itacademy.database.dto;
 
 import com.itacademy.database.entity.Professor;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +14,5 @@ import java.util.List;
 public class ProfessorsPageDto {
 
     private Integer pageNumber;
-    private ProfessorFilterDto filterDto;
     private List<Professor> entitiesList;
 }

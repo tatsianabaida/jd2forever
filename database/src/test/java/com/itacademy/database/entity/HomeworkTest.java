@@ -4,7 +4,7 @@ import java.io.Serializable;
 import org.hibernate.Session;
 import org.junit.Test;
 
-import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createHomework;
 import static org.junit.Assert.assertNotNull;
 
 public class HomeworkTest extends EntityTest {
