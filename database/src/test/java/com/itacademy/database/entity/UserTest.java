@@ -4,7 +4,7 @@ import java.io.Serializable;
 import org.hibernate.Session;
 import org.junit.Test;
 
-import static com.itacademy.database.testdata.TestDataGenerator.createDefaultUser;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createDefaultUser;
 import static org.junit.Assert.assertNotNull;
 
 public class UserTest extends EntityTest {

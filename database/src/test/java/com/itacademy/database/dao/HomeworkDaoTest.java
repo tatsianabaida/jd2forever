@@ -5,7 +5,7 @@ import com.itacademy.database.filter.HomeworkFilter;
 import java.util.List;
 import org.junit.Test;
 
-import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createHomework;
 import static org.junit.Assert.assertEquals;
 
 public class HomeworkDaoTest extends DaoTest {

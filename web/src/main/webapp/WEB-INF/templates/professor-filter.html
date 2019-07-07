@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Matveyenka academy</title>
+    <link rel="icon" href="https://pbs.twimg.com/media/D27t5xjXQAAiJv8.png"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <style>
+        /*noinspection CssInvalidPropertyValue*/
+        body {
+            background-color: azure;
+            height: -webkit-fill-available;
+        }
+    </style>
+</head>
+<body>
+<section class="a">
+    <div class="container-fluid  d-fluid justify-content-between" style="background-color: azure">
+        <div class="row">
+            <div class="col-lg" style="padding: 1%; margin: 1%; border-top-style: solid">
+                <form th:action="@{/api/professor-filter}" method="post">
+                    <style>
+                        body {
+                            background-color: azure;
+                        }
+
+                        form {
+                            width: 70%;
+                            display: inline-table;
+                            margin-top: 5%;
+                            margin-left: 15%;
+                            margin-right: 15%;
+                            background-color: #e8fdff;
+
+                            padding: 2%;
+                            padding-left: 5%;
+                            padding-right: 5%;
+                        }
+                    </style>
+                    <a class="form-group">
+                        <label for="firstName"><b>First name: </b></label>
+                        <input type="text" class="form-control" id="firstName"
+                               name="firstName" style="width: 65%"/>
+
+                        <label for="lastName"><b>Last name: </b></label>
+                        <input type="text" class="form-control" id="lastName"
+                               name="lastName" style="width: 65%"/>
+
+                        <label for="email"><b>E-mail: </b></label>
+                        <input type="email" class="form-control" id="email"
+                               name="email" style="width: 65%"/>
+
+                        <label for="speciality"><b>Speciality: </b></label>
+                        <select class="form-control" id="speciality"
+                                name="speciality" style="width: 65%">
+                            <option value=""></option>
+                            <option th:each="speciality: ${specialities}"
+                                    th:text="${speciality}"
+                                    th:value="${speciality}">Speciality
+                            </option>
+                        </select>
+
+                        <br/><br/>
+                        <label for="limit" style=""><b>Limit: </b></label>
+                        <input type="number" class="form-control" id="limit"
+                               name="limit" style="width: 20%/* border-box*/"/><br/>
+
+                        <input class="btn btn-success" id="filter-button" style="margin-top: 1%" type="submit"
+                               value="Filter"/>
+                    </a>
+                </form>
+            </div>
+            <div class="col-sm" style="padding: 1%; margin: 1%; border-top-style: solid">
+                <div th:if="${#request.getParameter('not_found_error')}">
+                    <div class="alert alert-danger" role="alert"
+                         style="display: inline-table; width: content-box; margin-top: 2%; margin-left: 20%;">
+                        <span class="sr-only">Error:</span>
+                        <span>Professor not found!</span><br/>
+                    </div>
+                    <br/>
+                    <style>
+                        .col-sm {
+                            background-image: url("https://pbs.twimg.com/media/D28KQ3dXcAECj0a.png");
+                            background-position-x: center;
+                            background-position-y: bottom;
+                            background-repeat: no-repeat;
+                            background-blend-mode: darken;
+                            image-orientation: from-image;
+                            background-size: 50%;
+                        }
+                    </style>
+                </div>
+                <div th:if="${#request.getParameter('page') ne null}"
+                     th:with="currentPage=${T(java.lang.Integer).parseInt(#request.getParameter('page'))}">
+                    <nav aria-label="Pagination">
+                        <ul class="pagination justify-content-center"
+                            th:with="pagesAmount=${#lists.size(#session.getAttribute('pages'))}">
+                            <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                                <a class="page-link"
+                                   th:href="@{/api/professor-filter(page=${currentPage - 1})}"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item"
+                                th:each="page: ${#session.getAttribute('pages')}"
+                                th:classappend=
+                                        "${currentPage == page.pageNumber} ? 'active'">
+                                <a class="page-link" id="page${page.pageNumber}"
+                                   th:href="@{/api/professor-filter(page=${page.pageNumber})}"
+                                   th:text="${page.pageNumber}"> Page number
+                                </a>
+                            </li>
+                            <li class="page-item "
+                                th:classappend="${currentPage == pagesAmount} ? 'disabled'">
+                                <a class="page-link" th:href="@{/api/professor-filter(page=${currentPage + 1})}"
+                                   aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div th:with="currentPageIndex=${currentPage - 1}">
+                        <div th:each="professor:${#session.getAttribute('pages').get(currentPageIndex).entitiesList}">
+                            <b><span th:text="|${professor.person.lastName} ${professor.person.firstName}|">
+                                Professor's name
+                            </span></b>
+                            <br/><span>Email: </span>
+                            <span th:text="${professor.email}">Email</span>
+                            <br/><span>Speciality: </span>
+                            <span th:text="${professor.speciality}">Speciality</span>
+                            <br/><span>Interests: </span>
+                            <span th:text="${professor.interests}">Interests</span>
+                            <br/><br/></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

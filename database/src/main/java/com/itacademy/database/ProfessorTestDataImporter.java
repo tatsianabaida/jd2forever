@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static com.itacademy.database.entity.Role.ADMIN;
@@ -16,6 +17,7 @@ import static com.itacademy.database.entity.Role.ADMIN;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ProfessorTestDataImporter {
 
+    private final PasswordEncoder passwordEncoder;
     private final ProfessorDao professorDao;
 
     public void importTestData() {
@@ -25,7 +27,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Matveyenka")
                         .build())
                 .email("matveyenka@macademy.com")
-                .password("matveyenka")
+                .password(passwordEncoder.encode("matveyenka"))
                 .role(ADMIN)
                 .build(),
                 "Java", "Game Of Thrones", Short.valueOf("7"));
@@ -35,7 +37,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Gates")
                         .build())
                 .email("gates@macademy.com")
-                .password("gates")
+                .password(passwordEncoder.encode("gates"))
                 .role(ADMIN)
                 .build(),
                 "C++", "Big Data", Short.valueOf("15"));
@@ -45,7 +47,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Jobs")
                         .build())
                 .email("jobs@macademy.com")
-                .password("jobs")
+                .password(passwordEncoder.encode("jobs"))
                 .role(ADMIN)
                 .build(),
                 "Java", "Neural networks", Short.valueOf("12"));
@@ -55,7 +57,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Brin")
                         .build())
                 .email("brin@macademy.com")
-                .password("brin")
+                .password(passwordEncoder.encode("brin"))
                 .role(ADMIN)
                 .build(),
                 "C", "Algorithms", Short.valueOf("20"));
@@ -65,7 +67,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Cook")
                         .build())
                 .email("cook@macademy.com")
-                .password("cook")
+                .password(passwordEncoder.encode("cook"))
                 .role(ADMIN)
                 .build(),
                 "PHP", "Game Of Thrones", Short.valueOf("3"));
@@ -75,7 +77,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Greene")
                         .build())
                 .email("greene@macademy.com")
-                .password("greene")
+                .password(passwordEncoder.encode("greene"))
                 .role(ADMIN)
                 .build(),
                 "Java", "Big Data", Short.valueOf("5"));
@@ -85,7 +87,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Greene")
                         .build())
                 .email("mgreene@macademy.com")
-                .password("mgreene")
+                .password(passwordEncoder.encode("mgreene"))
                 .role(ADMIN)
                 .build(),
                 "C++", "Game Of Thrones", Short.valueOf("7"));
@@ -94,8 +96,8 @@ public class ProfessorTestDataImporter {
                         .firstName("Bill")
                         .lastName("Jobs")
                         .build())
-                .email("gates@macademy.com")
-                .password("gates")
+                .email("bjobs@macademy.com")
+                .password(passwordEncoder.encode("jobs"))
                 .role(ADMIN)
                 .build(),
                 "Groovy", "Big Data", Short.valueOf("15"));
@@ -105,7 +107,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Gates")
                         .build())
                 .email("sgates@macademy.com")
-                .password("sgates")
+                .password(passwordEncoder.encode("sgates"))
                 .role(ADMIN)
                 .build(),
                 "Java", "Neural networks", Short.valueOf("12"));
@@ -115,7 +117,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Jobs")
                         .build())
                 .email("sjobs@macademy.com")
-                .password("sjobs")
+                .password(passwordEncoder.encode("sjobs"))
                 .role(ADMIN)
                 .build(),
                 "C", "Algorithms", Short.valueOf("20"));
@@ -125,7 +127,7 @@ public class ProfessorTestDataImporter {
                         .lastName("Brin")
                         .build())
                 .email("tbrin@macademy.com")
-                .password("tbrin")
+                .password(passwordEncoder.encode("tbrin"))
                 .role(ADMIN)
                 .build(),
                 "JavaScript", "Game Of Thrones", Short.valueOf("3"));

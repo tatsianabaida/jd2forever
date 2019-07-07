@@ -7,9 +7,9 @@ import com.itacademy.database.filter.TaskFilter;
 import java.util.List;
 import org.junit.Test;
 
-import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
-import static com.itacademy.database.testdata.TestDataGenerator.createStudent;
-import static com.itacademy.database.testdata.TestDataGenerator.createTask;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createHomework;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createStudent;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createTask;
 import static org.junit.Assert.assertEquals;
 
 public class TaskDaoTest extends DaoTest {

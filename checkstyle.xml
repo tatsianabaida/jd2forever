@@ -199,7 +199,7 @@
 
         <!-- Checks for class design                         -->
         <!-- See http://checkstyle.sf.net/config_design.html -->
-        <module name="FinalClass"/>
+        <!--<module name="FinalClass"/>-->
         <!--<module name="HideUtilityClassConstructor"/> disabled because of @UtilityClass (Project Lombok)-->
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>

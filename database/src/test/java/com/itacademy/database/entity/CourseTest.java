@@ -5,8 +5,8 @@ import java.util.Arrays;
 import org.hibernate.Session;
 import org.junit.Test;
 
-import static com.itacademy.database.testdata.TestDataGenerator.createCourse;
-import static com.itacademy.database.testdata.TestDataGenerator.createStudent;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createCourse;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createStudent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

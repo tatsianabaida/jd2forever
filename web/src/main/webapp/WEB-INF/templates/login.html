@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+>
+<head>
+    <title>Matveyenka academy</title>
+    <link rel="icon" href="https://pbs.twimg.com/media/D27t5xjXQAAiJv8.png"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <style>
+        /*noinspection CssInvalidPropertyValue*/
+        body {
+            background-color: azure;
+            height: -webkit-fill-available;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-fixed-top">
+    <a class="navbar-brand mb-1 h1" th:href="@{/api/login}">
+        <img alt="Brand" src="https://pbs.twimg.com/media/D27t5xjXQAAiJv8.png:large"
+             width="80" height="80"/> Matveyenka academy
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"/>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link disabled" style="align-self: center"
+                   th:href="@{/api/home-page}">
+                    <b><span th:text="#{homePage}">Home page</span></b><br/>
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                   data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    <span th:text="#{courseProgram}">Course program</span>
+                </a>
+                <div class="dropdown-menu" aria-readonly="true" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item"><span th:text="#{introduction}">Introduction</span> </a>
+                    <a class="dropdown-item"><span th:text="#{conditions}">Conditions</span> </a>
+                    <a class="dropdown-item"><span th:text="#{cycles}">Cycles</span> </a>
+                    <a class="dropdown-item"><span th:text="#{arrays}">Arrays</span> </a>
+                    <a class="dropdown-item"><span th:text="#{andOther}">And other..</span> </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item"
+                       href="https://www.it-academy.by/course/java-developer/jd1-programmirovanie-na-java/">
+                        <span th:text="#{seeFullProgram}">See full program</span> </a>
+                </div>
+            </li>
+        </ul>
+        <div class="form-inline my-2 my-lg-0" style="margin-right: 5%">
+            <div class="btn-group btn-group-toggle selection-handle">
+                <a href="?language=en_US"
+                   class="btn btn-secondary selection-handle"> EN </a>
+                <a href="?language=ru_RU"
+                   class="btn btn-secondary selection-handle"> RU </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div th:if="${#request.getParameter('error')}"
+     class="alert alert-danger" role="alert"
+     style="display: inline-table; width: content-box; margin-top: 2%; margin-left: 20%; margin-bottom: -1%">
+    <span class="sr-only">Error:</span>
+    <span th:text="#{alert}">General error message</span>
+</div>
+
+<div th:if="${#request.getParameter('logout')}"
+     class="alert alert-info" role="alert"
+     style="display: inline-table; width: content-box; margin-top: 2%; margin-left: 20%; margin-bottom: -1%">
+    <span th:text="#{logoutSuccessMessage}">Signed out!</span>
+</div>
+
+<form th:action="@{/api/login}" th:method="post">
+    <a class="form-group">
+        <label for="email">
+            <b><span th:text="#{e-mailAdderessLabel}">Email label</span></b>
+        </label>
+        <input type="email" required="true" class="form-control" id="email" aria-describedby="emailHelp"
+               th:placeholder="#{emailPlaceholder}" name="username"
+               th:value="${#request.getParameter('email')}" style="width: 65%"/>
+        <small id="emailHelp" class="form-text text-muted">
+            <span th:text="#{emailHelp}">Email help message</span>
+        </small>
+        <br/>
+
+        <label for="password">
+            <b><span th:text="#{passwordLabel}">Password label</span></b>
+        </label>
+        <input type="password" required="true" class="form-control" id="password"
+               th:placeholder="#{passwordPlaceholder}" name="password" style="width: 65%"/><br/>
+
+        <input class="btn btn-success" id="login" style="margin-top: 1%" type="submit" th:value="#{loginWord}"/>
+
+        <style>
+            form {
+                width: 40%;
+                display: inline-table;
+                margin-top: 5%;
+                margin-left: 15%;
+                margin-right: 30%;
+                background-color: #e8fdff;
+
+                padding: 2%;
+                padding-left: 5%;
+                padding-right: 5%;
+            }
+        </style>
+        <style th:if="${#request.getParameter('error')}">
+            form {
+                margin-top: unset;
+            }
+
+            body {
+                background-image: url("https://pbs.twimg.com/media/D-18CVcXUAE-Ah2.png");
+                background-position-x: right;
+                background-position-y: bottom;
+                background-repeat: no-repeat;
+                background-blend-mode: darken;
+                background-size: 40%;
+
+            }
+        </style>
+        <style th:if="${#request.getParameter('logout')}">
+            form {
+                margin-top: unset;
+            }
+
+            body {
+                background-image: url("https://pbs.twimg.com/media/D-15vZJWkAAiGdx.png");
+                background-position-x: right;
+                background-position-y: bottom;
+                background-repeat: no-repeat;
+                background-blend-mode: unset;
+                background-size: 40%;
+            }
+        </style>
+    </a>
+</form>
+</body>
+</html>

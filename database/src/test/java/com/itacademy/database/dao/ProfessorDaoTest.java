@@ -3,9 +3,11 @@ package com.itacademy.database.dao;
 import com.itacademy.database.entity.Professor;
 import com.itacademy.database.filter.ProfessorFilter;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Test;
 
-import static com.itacademy.database.testdata.TestDataGenerator.createProfessor;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createProfessor;
 import static org.junit.Assert.assertEquals;
 
 public class ProfessorDaoTest extends DaoTest {
@@ -66,5 +68,14 @@ public class ProfessorDaoTest extends DaoTest {
 
         assertEquals(expectedByFirstName, allByFirstName.size());
         assertEquals(expectedByFirstNameAndEmail, allByFirstNameAndEmail.size());
+    }
+
+    @Test
+    public void getSpecialities() {
+        professorTestDataImporter.importTestData();
+        Set<String> expectedSpecialities = professorDao.findAll().stream()
+                .map(Professor::getSpeciality)
+                .collect(Collectors.toSet());
+        assertEquals(expectedSpecialities, professorDao.getSpecialities());
     }
 }

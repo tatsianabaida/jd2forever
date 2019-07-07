@@ -3,8 +3,11 @@ package com.itacademy.service.service;
 import com.itacademy.database.dto.ProfessorFilterDto;
 import com.itacademy.database.entity.Professor;
 import java.util.List;
-import org.junit.Assert;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ProfessorServiceTest extends ServiceTest {
 
@@ -21,7 +24,7 @@ public class ProfessorServiceTest extends ServiceTest {
                 .build());
 
         int expectedAllJava = 3;
-        Assert.assertEquals(expectedAllJava, allJava.size());
+        assertEquals(expectedAllJava, allJava.size());
     }
 
     @Test
@@ -30,6 +33,15 @@ public class ProfessorServiceTest extends ServiceTest {
         List<Professor> all = professorService.findAll();
 
         int expectedAll = 11;
-        Assert.assertEquals(expectedAll, all.size());
+        assertEquals(expectedAll, all.size());
+    }
+
+    @Test
+    public void getSpecialities() {
+        professorTestDataImporter.importTestData();
+        Set<String> expectedSpecialities = professorService.findAll().stream()
+                .map(Professor::getSpeciality)
+                .collect(Collectors.toSet());
+        assertEquals(expectedSpecialities, professorService.getSpecialities());
     }
 }

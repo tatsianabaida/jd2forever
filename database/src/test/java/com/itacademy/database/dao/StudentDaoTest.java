@@ -6,7 +6,7 @@ import com.itacademy.database.entity.Mark;
 import com.itacademy.database.entity.Student;
 import org.junit.Test;
 
-import static com.itacademy.database.testdata.TestDataGenerator.createHomework;
+import static com.itacademy.database.testdata.TestDataGeneratorDatabase.createHomework;
 import static org.junit.Assert.assertEquals;
 
 public class StudentDaoTest extends DaoTest {
